@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abyssal Intelligence | Rococo Edition</title>
+    <style>
+        /* --- 1. 기본 설정 및 변수 --- */
+        :root {
+            --bg-deep: #000814;
+            --bg-ocean: #001d3d;
+            /* 로코코 골드 팔레트: 더 풍부하고 앤티크한 색감 */
+            --gold-highlight: #F7E98D; /* 하이라이트 */
+            --gold-mid: #C9A050;       /* 중간톤 */
+            --gold-shadow: #8C6428;    /* 그림자톤 */
+            --gold-deep-shadow: #5e4012; /* 깊은 그림자 */
+            --text-main: #e0fbfc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, var(--bg-ocean), var(--bg-deep));
+            color: var(--text-main);
+            font-family: 'Pretendard', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* --- 2. 배경 효과 (물방울) - 이전과 동일 --- */
+        .bubble-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .bubble {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            animation: floatUp linear forwards;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            10% { opacity: 0.7; }
+            100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
+        }
+
+        /* --- 3. 공통 스타일 --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        h1, h2 {
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 3.5rem; margin-top: 15vh; font-weight: 300; letter-spacing: 5px;
+            animation: titleFloat 3s ease-in-out infinite alternate;
+        }
+        @keyframes titleFloat {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+        h2 {
+            font-size: 2rem; color: var(--gold-highlight);
+            border-bottom: 2px solid var(--gold-shadow);
+            display: inline-block; padding-bottom: 10px;
+        }
+
+        /* --- 4. [핵심 수정] 로코코 양식의 화려한 금속 프레임 스타일 --- */
+        .gold-frame {
+            position: relative;
+            /* 1. 기본 프레임 두께와 메탈릭 그라데이션 */
+            border: 20px solid var(--gold-mid);
+            border-image: linear-gradient(
+                to bottom right,
+                var(--gold-highlight) 0%,
+                var(--gold-mid) 25%,
+                var(--gold-shadow) 50%,
+                var(--gold-mid) 75%,
+                var(--gold-highlight) 100%
+            ) 1;
+            
+            /* 2. 다중 그림자를 통한 입체감 및 발광 효과 */
+            box-shadow: 
+                /* 가장 바깥쪽 금색 광채 */
+                0 0 25px 5px rgba(212, 175, 55, 0.5),
+                /* 프레임 외곽의 깊은 그림자 (입체감) */
+                0 15px 30px rgba(0,0,0,0.8),
+                /* 프레임 안쪽으로 파고드는 그림자 (베벨 효과) */
+                inset 0 5px 15px rgba(0,0,0,0.7),
+                /* 프레임 안쪽 금색 반사광 */
+                inset 0 0 20px rgba(255, 215, 0, 0.4);
+
+            border-radius: 4px; /* 아주 약간의 둥근 모서리 */
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            background: #000; /* 이미지 로딩 전 배경 */
+            overflow: hidden; /* 내부 질감 패턴이 튀어나가지 않게 */
+        }
+
+        /* 3. 가상 요소를 활용한 표면 조각 패턴(에칭) 질감 추가 */
+        .gold-frame::after {
+            content: '';
+            position: absolute;
+            top: -20px; left: -20px; right: -20px; bottom: -20px; /* 테두리 영역 덮기 */
+            pointer-events: none;
+            opacity: 0.25; /* 은은하게 보이도록 설정 */
+            z-index: 2;
+            /* 반복되는 원형 그라데이션을 이용한 조각 패턴 시뮬레이션 */
+            background-image: 
+                radial-gradient(circle at 100% 100%, transparent 9px, var(--gold-deep-shadow) 10px, var(--gold-deep-shadow) 11px, transparent 12px),
+                radial-gradient(circle at 0 100%, transparent 9px, var(--gold-deep-shadow) 10px, var(--gold-deep-shadow) 11px, transparent 12px),
+                radial-gradient(circle at 100% 0, transparent 9px, var(--gold-deep-shadow) 10px, var(--gold-deep-shadow) 11px, transparent 12px),
+                radial-gradient(circle at 0 0, transparent 9px, var(--gold-deep-shadow) 10px, var(--gold-deep-shadow) 11px, transparent 12px);
+            background-size: 30px 30px; /* 패턴 크기 */
+            background-position: 0 0, 15px 0, 0 15px, 15px 15px; /* 패턴 교차 배치 */
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5); /* 전체적인 앤티크한 어둠 추가 */
+        }
+
+        /* 이미지와 비디오가 패턴 뒤로 가지 않도록 z-index 조정 */
+        .art-image, .video-wrapper video {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            display: block;
+        }
+
+        /* 호버 시 효과 강화 */
+        .gold-frame:hover {
+            transform: scale(1.03) translateY(-5px); /* 약간 커지면서 위로 떠오름 */
+            box-shadow: 
+                0 0 40px 10px rgba(212, 175, 55, 0.7), /* 광채 강화 */
+                0 25px 50px rgba(0,0,0,0.9), /* 그림자 강화 */
+                inset 0 5px 15px rgba(0,0,0,0.7),
+                inset 0 0 30px rgba(255, 215, 0, 0.6); /* 내부 반사 강화 */
+        }
+
+        /* --- 5. 갤러리 섹션 --- */
+        .gallery-section {
+            margin-top: 100px;
+            display: flex; justify-content: center; gap: 50px; flex-wrap: wrap;
+        }
+        .art-card {
+            width: 320px; /* 프레임이 두꺼워져서 전체 너비 약간 증가 */
+            opacity: 0; transform: translateY(50px); transition: all 0.8s ease-out;
+        }
+        .art-card.visible { opacity: 1; transform: translateY(0); }
+        .art-image { height: 420px; object-fit: cover; }
+        .art-info { text-align: center; margin-top: 20px; color: #aaa; }
+        .art-info h3 { color: var(--gold-highlight); margin-bottom: 5px; font-weight: normal; letter-spacing: 1px; }
+
+        /* --- 6. 비디오 섹션 --- */
+        .video-section {
+            margin: 180px auto; text-align: center; opacity: 0; transform: translateY(50px); transition: all 0.8s ease-out;
+        }
+        .video-section.visible { opacity: 1; transform: translateY(0); }
+        .video-wrapper { max-width: 840px; margin: 0 auto; }
+
+        /* --- 7. 푸터 --- */
+        footer { text-align: center; padding: 50px 0; color: #555; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div id="bubble-container" class="bubble-container"></div>
+    <div class="container">
+        <header>
+            <h1>ABYSSAL INTELLIGENCE</h1>
+            <p style="text-align: center; opacity: 0.7; color: var(--gold-mid);">The Rococo Exhibition in the Deep</p>
+        </header>
+
+        <section class="gallery-section">
+            <div class="art-card">
+                <div class="gold-frame">
+                    <img src="img/img-1.jpeg" alt="말하는 병아리" class="art-image">
+                </div>
+                <div class="art-info">
+                    <h3>말하는 병아리</h3>
+                    <p>Made by perchance</p>
+                </div>
+            </div>
+            <div class="art-card" style="transition-delay: 0.2s;">
+                <div class="gold-frame">
+                    <img src="img/img-2.jpeg" alt="안정형 씨" class="art-image">
+                </div>
+                <div class="art-info">
+                    <h3>안정형 씨</h3>
+                    <p>Made by perchance</p>
+                </div>
+            </div>
+            <div class="art-card" style="transition-delay: 0.4s;">
+                <div class="gold-frame">
+                    <img src="img/img-3.png" alt="말차하임 광고 이미지" class="art-image">
+                </div>
+                <div class="art-info">
+                    <h3>말차하임 광고 이미지</h3>
+                    <p>Made by SEAART.AI</SEAART></p>
+                </div>
+            </div>
+        </section>
+
+ <section class="video-section">
+    <h2>COMMERCIAL FILM</h2>
+    <br><br>
+
+    <div class="gold-frame video-wrapper">
+        <iframe
+            width="900"
+            height="800"
+            src="https://www.youtube.com/embed/Y9NZAl0GiIY"
+            title="AI 제작 말차하임 광고"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+        </iframe>
+    </div>
+    <div class="art-info">
+        <br>
+        <p>말차하임 광고 - Commercial</p>
+    </div>
+</section>
+<section class="link-section">
+    <h2>DOCUMENT</h2>
+    <br><br>
+    <a
+        class="gold-frame link-card"
+        href="https://docs.google.com/document/d/1ITJ1R2KxBOWJnrMjh-I_l21eWRy8MLJYp8AraRpeCKQ/edit?usp=sharing"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        <h3>GOOGLE DOC 바로가기</h3>
+        <p>이력서/소개서 문서를 바로 열 수 있어요.</p>
+        <span class="link-chip">OPEN DOCUMENT →</span>
+    </a>
+    <div class="art-info">
+        <br>
+        <p>문서 링크 - Google Docs</p>
+    </div>
+</section>
+        <footer>
+            <p>&copy; 2024 AI Art Portfolio. Created by Gemini.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 1. 마우스 인터랙션: 움직일 때 물방울 생성 효과
+        document.addEventListener('mousemove', function(e) {
+            createMouseBubble(e.clientX, e.clientY);
+        });
+
+        function createMouseBubble(x, y) {
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble');
+            document.body.appendChild(bubble);
+
+            // 크기 랜덤 설정
+            const size = Math.random() * 20 + 5; // 5px ~ 25px
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            
+            // 위치 설정
+            bubble.style.left = `${x}px`;
+            bubble.style.top = `${y}px`;
+            bubble.style.position = 'fixed'; // 스크롤 무관하게 화면 기준
+
+            // 애니메이션 속도 랜덤
+            const duration = Math.random() * 1 + 1; // 1~2초
+            bubble.style.animation = `floatUp ${duration}s ease-out forwards`;
+
+            // 애니메이션 종료 후 요소 삭제 (메모리 관리)
+            setTimeout(() => {
+                bubble.remove();
+            }, duration * 1000);
+        }
+
+        // 2. 배경 자동 물방울 생성 (아쿠아리움 분위기)
+        const bubbleContainer = document.getElementById('bubble-container');
+        
+        function createBackgroundBubble() {
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble');
+            
+            const size = Math.random() * 50 + 10;
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            
+            // 랜덤 시작 위치 (가로)
+            bubble.style.left = `${Math.random() * 100}%`;
+            bubble.style.top = '100%'; // 바닥에서 시작
+            
+            const duration = Math.random() * 5 + 5; // 5~10초 (천천히)
+            bubble.style.animation = `floatUp ${duration}s linear forwards`;
+            
+            bubbleContainer.appendChild(bubble);
+            
+            setTimeout(() => {
+                bubble.remove();
+            }, duration * 1000);
+        }
+
+        // 0.5초마다 배경 물방울 생성
+        setInterval(createBackgroundBubble, 500);
+
+        // 3. 스크롤 인터랙션 (Intersection Observer): 요소가 화면에 보이면 떠오름
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // 한 번 보이면 관찰 중단
+                }
+            });
+        }, observerOptions);
+
+        // 관찰 대상 등록
+      document.querySelectorAll('.art-card, .video-section, .link-section').forEach(el => {
+    observer.observe(el);
+});
+    </script>
+</body>
+</html>
